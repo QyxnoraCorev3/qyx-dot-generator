@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QyxnoraCore - Gmail Project Manager Pro</title>
+<title>QyxnoraCore - Universal Dot Email Manager Pro</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -52,7 +52,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Toast */
+/* Toast Notification */
 .toast-container {
     position: fixed; top: 20px; right: 20px;
     z-index: 99999; display: flex; flex-direction: column; gap: 8px;
@@ -135,14 +135,9 @@ table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: lef
 th { background: var(--sidebar-bg); padding: 10px 14px; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
 td { padding: 10px 14px; border-bottom: 1px solid var(--card-border); }
 
-/* Pink Highlight for Copied Gmails */
+/* Pink Highlight for Copied Emails */
 tr.copied-row { background: rgba(236, 72, 153, 0.15) !important; color: var(--pink-highlight); }
 tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
-
-.badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
-.badge-available { background: rgba(5, 150, 105, 0.2); color: #10B981; }
-.badge-used { background: rgba(225, 29, 72, 0.2); color: #F43F5E; }
-.badge-reserved { background: rgba(2, 132, 199, 0.2); color: #38BDF8; }
 
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 </style>
@@ -155,7 +150,7 @@ tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="brand">
-            <span><i class="fa-solid fa-envelope-open-text" style="color: var(--accent-purple);"></i> Gmail Manager</span>
+            <span><i class="fa-solid fa-envelope-open-text" style="color: var(--accent-purple);"></i> Email Manager</span>
             <span class="brand-badge">PRO</span>
         </div>
 
@@ -185,7 +180,7 @@ tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
             <!-- Dashboard Stats & Progress -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <span style="font-size:10px; color:var(--text-muted)">TOTAL GMAIL</span>
+                    <span style="font-size:10px; color:var(--text-muted)">TOTAL EMAIL</span>
                     <strong style="font-size:18px" id="stTotal">0</strong>
                 </div>
                 <div class="stat-card">
@@ -211,16 +206,16 @@ tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
                 <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
             </div>
 
-            <!-- Gmail Dot Generator & Import Area -->
+            <!-- Email Dot Generator & Import Area -->
             <div class="card">
-                <div style="font-size:12px; font-weight:700;">📧 Gmail Dot Generator & Bulk Add</div>
+                <div style="font-size:12px; font-weight:700;">📧 Universal Dot Generator & Bulk Add</div>
                 <div class="input-row">
-                    <input type="text" id="gmailBaseInput" placeholder="qyxnoracore@gmail.com" style="flex:1">
+                    <input type="text" id="gmailBaseInput" placeholder="Kanacoda@proton.me or example@gmail.com" style="flex:1">
                     <button class="btn btn-purple" onclick="generateDotGmails()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Dots</button>
                 </div>
-                <textarea id="bulkArea" style="height:70px; background:var(--input-bg); border:1px solid var(--card-border); color:var(--text-primary); padding:8px; border-radius:8px; font-size:12px; outline:none;" placeholder="Or paste bulk Gmails line by line..."></textarea>
+                <textarea id="bulkArea" style="height:70px; background:var(--input-bg); border:1px solid var(--card-border); color:var(--text-primary); padding:8px; border-radius:8px; font-size:12px; outline:none;" placeholder="Or paste bulk Emails line by line..."></textarea>
                 <div class="input-row">
-                    <button class="btn btn-emerald" onclick="importBulkGmails()"><i class="fa-solid fa-file-import"></i> Add Bulk Gmails</button>
+                    <button class="btn btn-emerald" onclick="importBulkGmails()"><i class="fa-solid fa-file-import"></i> Add Bulk Emails</button>
                     <button class="btn btn-cyan" onclick="shuffleList()"><i class="fa-solid fa-random"></i> Shuffle List</button>
                     <button class="btn btn-purple" onclick="removeDuplicates()"><i class="fa-solid fa-clone"></i> Remove Duplicates</button>
                 </div>
@@ -229,7 +224,7 @@ tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
             <!-- Data Table with Filters -->
             <div class="card">
                 <div class="filter-bar">
-                    <input type="text" id="searchBox" placeholder="Search Gmails/Notes..." oninput="renderTable()" style="padding:6px 10px; font-size:11px; width:200px;">
+                    <input type="text" id="searchBox" placeholder="Search Emails/Notes..." oninput="renderTable()" style="padding:6px 10px; font-size:11px; width:200px;">
                     <button class="filter-btn active" id="fAll" onclick="setFilter('all')">Show All</button>
                     <button class="filter-btn" id="fCopied" onclick="setFilter('copied')">Copied</button>
                     <button class="filter-btn" id="fUncopied" onclick="setFilter('uncopied')">Uncopied</button>
@@ -242,7 +237,7 @@ tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
                     <thead>
                         <tr>
                             <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>
-                            <th>Gmail Address</th>
+                            <th>Email Address</th>
                             <th>Status</th>
                             <th>Note</th>
                             <th style="text-align:right">Actions</th>
@@ -356,13 +351,22 @@ function renderProjects() {
     if (active) document.getElementById("currentProjTitle").innerText = "📁 " + active.name;
 }
 
-// Gmail Generation & Addition
+// Email Generation & Addition (Supports Gmail, ProtonMail, Yahoo, Outlook, etc.)
 function generateDotGmails() {
     let input = document.getElementById("gmailBaseInput").value.trim().toLowerCase();
-    if (!input.includes("@gmail.com")) return alert("Valid @gmail.com required!");
     
-    let username = input.split("@")[0].replace(/\./g, '');
-    let domain = "@gmail.com";
+    if (!input || !input.includes("@")) {
+        return alert("Please enter a valid email address with '@'");
+    }
+    
+    let parts = input.split("@");
+    let username = parts[0].replace(/\./g, '');
+    let domain = "@" + parts[1];
+
+    if (username.length <= 1) {
+        return alert("Username must be at least 2 characters long!");
+    }
+
     let len = username.length;
     let combinations = Math.pow(2, len - 1);
     let results = [];
@@ -385,7 +389,7 @@ function generateDotGmails() {
     saveState();
     renderProjects();
     renderTable();
-    showToast(`Generated ${results.length} Dot Gmails!`);
+    showToast(`Generated ${results.length} Dot Emails!`);
 }
 
 function importBulkGmails() {
@@ -407,7 +411,7 @@ function importBulkGmails() {
     saveState();
     renderProjects();
     renderTable();
-    showToast(`Added ${count} Gmails!`);
+    showToast(`Added ${count} Emails!`);
 }
 
 // Table Rendering & Filters
@@ -436,7 +440,7 @@ function renderTable() {
 
     filtered.forEach(item => {
         let tr = document.createElement("tr");
-        if (item.copied) tr.className = "copied-row"; // Pink highlight for copied
+        if (item.copied) tr.className = "copied-row";
 
         tr.innerHTML = `
             <td><input type="checkbox" ${item.selected ? 'checked' : ''} onclick="toggleSelect('${item.id}')"></td>
@@ -567,10 +571,10 @@ function removeDuplicates() {
 function pickRandom() {
     let proj = getActiveProj();
     let uncopied = proj.items.filter(x => !x.copied);
-    if (uncopied.length === 0) return alert("No uncopied Gmails left!");
+    if (uncopied.length === 0) return alert("No uncopied Emails left!");
     let random = uncopied[Math.floor(Math.random() * uncopied.length)];
     copySingle(random.id, random.email);
-    alert("Picked Random Gmail:\n" + random.email);
+    alert("Picked Random Email:\n" + random.email);
 }
 
 function copyAllFiltered() {
@@ -580,13 +584,13 @@ function copyAllFiltered() {
         let matchSearch = item.email.toLowerCase().includes(search);
         if (!matchSearch) return false;
         if (currentFilter === 'copied') return item.copied;
-        if (currentFilter === 'uncopied') me = !item.copied;
+        if (currentFilter === 'uncopied') return !item.copied;
         return true;
     }).map(x => x.email);
 
     if (list.length === 0) return showToast("Nothing to copy!");
     navigator.clipboard.writeText(list.join("\n"));
-    showToast(`Copied ${list.length} Gmails!`);
+    showToast(`Copied ${list.length} Emails!`);
 }
 
 // Backup & Export
@@ -596,7 +600,7 @@ function exportTxt() {
     let blob = new Blob([txt], {type: "text/plain"});
     let a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `${proj.name}_gmails.txt`;
+    a.download = `${proj.name}_emails.txt`;
     a.click();
 }
 
@@ -604,7 +608,7 @@ function exportJson() {
     let blob = new Blob([JSON.stringify(projects, null, 2)], {type: "application/json"});
     let a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `qyx_gmail_backup.json`;
+    a.download = `qyx_email_backup.json`;
     a.click();
 }
 
