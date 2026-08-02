@@ -1,1 +1,297 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QyxnoraCore - Gmail Dot Generator</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+<style>
+:root {
+    --bg-dark: #05070e;
+    --card-bg: #0f1422;
+    --card-border: #1a233a;
+    --accent-purple: #7C3AED;
+    --accent-cyan: #0284C7;
+    --accent-emerald: #059669;
+    --accent-rose: #E11D48;
+    --text-primary: #F8FAFC;
+    --text-muted: #64748B;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Toast Notification */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.toast {
+    background: #182238;
+    border-left: 4px solid var(--accent-purple);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.container {
+    width: 100%;
+    max-width: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 16px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.brand-badge {
+    background: var(--accent-purple);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.input-box {
+    display: flex;
+    gap: 10px;
+}
+
+.input-box input {
+    flex: 1;
+    background: #070912;
+    border: 1px solid var(--card-border);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+.input-box input:focus {
+    border-color: var(--accent-purple);
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #fff;
+    transition: 0.2s;
+}
+
+.btn-purple { background: var(--accent-purple); }
+.btn-purple:hover { background: #6D28D9; }
+.btn-cyan { background: var(--accent-cyan); }
+.btn-emerald { background: var(--accent-emerald); }
+.btn-rose { background: var(--accent-rose); }
+
+.stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #070912;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    font-size: 13px;
+}
+
+.output-box {
+    width: 100%;
+    height: 250px;
+    background: #070912;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 14px;
+    color: #38BDF8;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+}
+
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="toast-container" id="toastBox"></div>
+
+<div class="container">
+    <div class="header">
+        <div class="brand">
+            <i class="fa-solid fa-envelope-open-text" style="color: #8B5CF6;"></i>
+            Gmail Dot Generator
+            <span class="brand-badge">Tool</span>
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>আপনার জিমেইল অ্যাড্রেস লিখুন</label>
+        <div class="input-box">
+            <input type="text" id="gmailInput" placeholder="qyxnoracore@gmail.com" value="qyxnoracore@gmail.com">
+            <button class="btn btn-purple" onclick="generateDots()"><i class="fa-solid fa-wand-magic-sparkles"></i> জেনারেট করুন</button>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <span>মোট ডট মেইল তৈরি হয়েছে: <strong id="totalCount" style="color: #10B981;">0</strong> টি</span>
+    </div>
+
+    <textarea id="outputArea" class="output-box" readonly placeholder="জেনারেট হওয়া মেলগুলো এখানে দেখাবে..."></textarea>
+
+    <div class="action-grid">
+        <button class="btn btn-cyan" onclick="copyAll()"><i class="fa-solid fa-copy"></i> কপি অল</button>
+        <button class="btn btn-emerald" onclick="downloadTxt()"><i class="fa-solid fa-file-arrow-down"></i> ডাউনলোড TXT</button>
+        <button class="btn btn-rose" onclick="clearAll()"><i class="fa-solid fa-trash"></i> ক্লিয়ার</button>
+    </div>
+</div>
+
+<script>
+function showToast(msg) {
+    const box = document.getElementById("toastBox");
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerText = msg;
+    box.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+}
+
+function generateDots() {
+    let email = document.getElementById("gmailInput").value.trim().toLowerCase();
+    
+    if (!email || !email.includes("@gmail.com")) {
+        alert("দয়া করে একটি সঠিক @gmail.com ইমেইল অ্যাড্রেস লিখুন!");
+        return;
+    }
+
+    let username = email.split("@")[0].replace(/\./g, '');
+    let domain = "@gmail.com";
+
+    if (username.length <= 1) {
+        alert("ইউজারনেম অন্তত ২ অক্ষরের হতে হবে!");
+        return;
+    }
+
+    let results = [];
+    let len = username.length;
+    let combinations = Math.pow(2, len - 1);
+
+    for (let i = 0; i < combinations; i++) {
+        let currentEmail = "";
+        for (let j = 0; j < len; j++) {
+            currentEmail += username[j];
+            if (j < len - 1) {
+                if ((i & (1 << j)) !== 0) {
+                    currentEmail += ".";
+                }
+            }
+        }
+        results.push(currentEmail + domain);
+    }
+
+    document.getElementById("outputArea").value = results.join("\n");
+    document.getElementById("totalCount").innerText = results.length;
+    showToast("সফলভাবে জেনারেট হয়েছে!");
+}
+
+function copyAll() {
+    let txt = document.getElementById("outputArea").value;
+    if (!txt) return showToast("কপি করার মতো কিছুই নেই!");
+    navigator.clipboard.writeText(txt);
+    showToast("সবগুলো মেল কপি করা হয়েছে!");
+}
+
+function downloadTxt() {
+    let txt = document.getElementById("outputArea").value;
+    if (!txt) return showToast("ডাউনলোড করার মতো তথ্য নেই!");
+    
+    let blob = new Blob([txt], {type: "text/plain"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `dot_emails_${Date.now()}.txt`;
+    a.click();
+    showToast("TXT ফাইল ডাউনলোড শুরু হয়েছে!");
+}
+
+function clearAll() {
+    document.getElementById("gmailInput").value = "";
+    document.getElementById("outputArea").value = "";
+    document.getElementById("totalCount").innerText = "0";
+    showToast("সব পরিস্কার করা হয়েছে!");
+}
+
+window.onload = function() {
+    generateDots();
+};
+</script>
+
+</body>
+  </html>
+  
