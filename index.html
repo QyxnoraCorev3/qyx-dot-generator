@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gmail Project Manager - Dashboard Pro</title>
+<title>Gmail Project Manager - Mobile Responsive</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
@@ -44,59 +44,68 @@ body { background: var(--bg-main); color: var(--text-color); min-height: 100vh; 
 /* Header */
 header {
     height: 60px; background: var(--card-bg); border-bottom: 1px solid var(--border-color);
-    display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between; padding: 0 15px; position: sticky; top: 0; z-index: 100;
 }
-.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; color: var(--primary); }
-.search-bar { width: 350px; position: relative; }
-.search-bar input { width: 100%; padding: 8px 12px 8px 36px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-color); outline: none; }
-.search-bar i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; color: var(--primary); }
+.menu-toggle-btn { background: none; border: none; font-size: 20px; color: var(--text-color); cursor: pointer; padding: 5px 10px; border-radius: 6px; }
+.menu-toggle-btn:hover { background: var(--bg-main); }
 
-/* Main Grid */
-.dashboard-grid { display: grid; grid-template-columns: 260px 1fr 300px; gap: 16px; padding: 16px; }
+/* Sliding Sidebar Overlay */
+.sidebar-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 999; display: none; opacity: 0; transition: 0.3s;
+}
+.sidebar-overlay.active { display: block; opacity: 1; }
+
+.offcanvas-sidebar {
+    position: fixed; top: 0; left: -320px; width: 300px; height: 100%;
+    background: var(--card-bg); z-index: 1000; overflow-y: auto; padding: 15px;
+    transition: left 0.3s ease; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+.offcanvas-sidebar.active { left: 0; }
+
+.sidebar-close-btn { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+
+/* Main Workspace */
+.main-wrapper { padding: 15px; max-width: 1200px; margin: 0 auto; }
 
 .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
 .card-header { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
-/* Sidebar Menu */
+/* Menu Styling */
 .menu-group { display: flex; flex-direction: column; gap: 2px; }
 .menu-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; color: var(--text-color); cursor: pointer; font-weight: 600; font-size: 12px; }
 .menu-item:hover { background: var(--bg-main); color: var(--primary); }
 
-.proj-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; font-weight: 600; }
+.proj-list-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .proj-list-item.active { background: var(--primary); color: #fff; }
 .proj-list-item span.badge { background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 10px; font-size: 10px; }
 
-/* Dashboard Top Stats */
-.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 12px; }
-.stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; }
-.stat-box .val { font-size: 20px; font-weight: 800; margin-top: 4px; }
+/* Dashboard Top Stats Responsive */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 12px; }
+.stat-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; text-align: center; }
+.stat-box .val { font-size: 18px; font-weight: 800; margin-top: 4px; }
 
-/* Forms & Buttons */
-.input-group { display: flex; gap: 8px; margin-bottom: 8px; }
-input[type="text"], textarea, select {
+/* Forms & Inputs Responsive */
+.input-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+input[type="text"], input[type="number"], textarea, select {
     background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-color);
     padding: 8px 12px; border-radius: 8px; outline: none; font-size: 12px;
 }
-.btn { padding: 8px 14px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #fff; background: var(--primary); }
+.btn { padding: 8px 12px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-size: 12px; color: #fff; background: var(--primary); }
 .btn:hover { opacity: 0.9; }
 .btn-emerald { background: var(--emerald); }
 .btn-rose { background: var(--rose); }
 .btn-amber { background: var(--amber); }
 
-/* Table Section */
-.table-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; }
+/* Responsive Table Container */
+.table-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 500px; }
+th, td { padding: 10px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; white-space: nowrap; }
 th { background: var(--bg-main); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
 
 tr.copied-row { background: var(--pink-highlight) !important; color: var(--pink-text); font-weight: 600; }
 tr.copied-row td { border-bottom-color: var(--pink-border); }
-
-.status-badge { padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
-.status-Available { background: rgba(16, 185, 129, 0.1); color: var(--emerald); }
-.status-Copied { background: var(--pink-highlight); color: var(--pink-text); }
-.status-Used { background: rgba(239, 68, 68, 0.1); color: var(--rose); }
-.status-Reserved { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
 
 /* Storage Bar */
 .storage-bar { width: 100%; height: 6px; background: var(--border-color); border-radius: 10px; overflow: hidden; margin: 6px 0; }
@@ -108,167 +117,161 @@ tr.copied-row td { border-bottom-color: var(--pink-border); }
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
-    <div class="brand"><i class="fa-solid fa-envelope-open-text"></i> Gmail Project Manager</div>
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="globalSearch" placeholder="Search gmail..." oninput="renderTable()">
+    <div style="display:flex; align-items:center; gap:8px;">
+        <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div class="brand"><i class="fa-solid fa-envelope-open-text"></i> Gmail Manager</div>
     </div>
-    <div style="display:flex; align-items:center; gap:12px;">
-        <button class="btn" onclick="toggleTheme()" style="padding:6px 12px;"><i class="fa-solid fa-moon"></i> Theme Mode</button>
-        <strong>PALU YADAV</strong>
+    <div style="display:flex; align-items:center; gap:8px;">
+        <button class="btn" onclick="toggleTheme()" style="padding:6px 10px;"><i class="fa-solid fa-moon"></i></button>
     </div>
 </header>
 
-<div class="dashboard-grid">
-    <!-- LEFT SIDEBAR -->
-    <div>
-        <div class="card">
-            <div class="card-header">PROJECT MANAGEMENT</div>
-            <div class="menu-group">
-                <div class="menu-item" onclick="createProject()"><i class="fa-solid fa-plus"></i> Create Unlimited Projects</div>
-                <div class="menu-item" onclick="renameProject()"><i class="fa-solid fa-pen"></i> Rename Project</div>
-                <div class="menu-item" onclick="deleteProject()"><i class="fa-solid fa-trash"></i> Delete Project</div>
-                <div class="menu-item" onclick="exportBackup()"><i class="fa-solid fa-download"></i> Backup Projects</div>
-            </div>
-        </div>
+<!-- OVERLAY & SIDEBAR (DRAWER) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="offcanvas-sidebar" id="offcanvasSidebar">
+    <div class="sidebar-close-btn">
+        <strong style="color:var(--primary);">CONTROL CENTER</strong>
+        <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
 
-        <div class="card">
-            <div class="card-header">MY PROJECTS</div>
-            <button class="btn" style="width:100%; margin-bottom:8px;" onclick="createProject()">+ New Project</button>
-            <div id="projectList" style="display:flex; flex-direction:column; gap:4px;"></div>
-        </div>
+    <!-- Search in Sidebar -->
+    <div class="card">
+        <div class="card-header">🔍 SEARCH GMAIL</div>
+        <input type="text" id="globalSearch" placeholder="Type email to search..." oninput="renderTable()" style="width:100%;">
+    </div>
 
-        <div class="card">
-            <div class="card-header">GMAIL GENERATOR</div>
-            <div class="menu-group">
-                <div class="menu-item" onclick="document.getElementById('generatorInput').focus()"><i class="fa-solid fa-wand-magic-sparkles"></i> Universal Dot Generator</div>
-                <div class="menu-item" onclick="pickRandom()"><i class="fa-solid fa-shuffle"></i> Random Gmail Picker</div>
-                <div class="menu-item" onclick="removeDuplicates()"><i class="fa-solid fa-clone"></i> Duplicate Checker & Remove</div>
-                <div class="menu-item" onclick="shuffleList()"><i class="fa-solid fa-random"></i> Shuffle Gmail List</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">COPY MANAGEMENT</div>
-            <div class="menu-group">
-                <div class="menu-item" onclick="copySelected()"><i class="fa-solid fa-copy"></i> One Click / Copy Selected</div>
-                <div class="menu-item" onclick="undoLastCopy()"><i class="fa-solid fa-rotate-left"></i> Undo Copy</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">STORAGE USAGE</div>
-            <div style="font-size:11px; color:var(--text-muted);">LocalStorage Auto Save Active</div>
-            <div class="storage-bar"><div class="storage-fill" id="storageBar"></div></div>
-            <div style="font-size:10px; color:var(--text-muted);" id="storageTxt">Auto Restored & Saved</div>
+    <!-- Right Side Options Moved Here -->
+    <div class="card">
+        <div class="card-header">🔍 FILTER EMAILS</div>
+        <div class="menu-group">
+            <div class="menu-item" onclick="setFilter('all'); toggleSidebar();"><i class="fa-solid fa-list"></i> Show All</div>
+            <div class="menu-item" onclick="setFilter('copied'); toggleSidebar();"><i class="fa-solid fa-check-double"></i> Show Copied</div>
+            <div class="menu-item" onclick="setFilter('uncopied'); toggleSidebar();"><i class="fa-solid fa-clock"></i> Show Uncopied</div>
+            <div class="menu-item" onclick="setFilter('fav'); toggleSidebar();"><i class="fa-solid fa-star"></i> Show Favorites</div>
         </div>
     </div>
 
-    <!-- CENTER WORKSPACE -->
-    <div>
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-box">
-                <span style="font-size:10px; color:var(--text-muted);">TOTAL EMAIL</span>
-                <div class="val" id="stTotal" style="color:var(--primary)">0</div>
-            </div>
-            <div class="stat-box">
-                <span style="font-size:10px; color:var(--text-muted);">COPIED</span>
-                <div class="val" id="stCopied" style="color:var(--pink-text)">0</div>
-            </div>
-            <div class="stat-box">
-                <span style="font-size:10px; color:var(--text-muted);">REMAINING</span>
-                <div class="val" id="stRemaining" style="color:var(--amber)">0</div>
-            </div>
-            <div class="stat-box">
-                <span style="font-size:10px; color:var(--text-muted);">USED</span>
-                <div class="val" id="stUsed" style="color:var(--rose)">0</div>
-            </div>
-            <div class="stat-box">
-                <span style="font-size:10px; color:var(--text-muted);">FAVORITES</span>
-                <div class="val" id="stFav" style="color:var(--emerald)">0</div>
-            </div>
-        </div>
-
-        <!-- Dot Generator Input Box -->
-        <div class="card">
-            <div class="card-header">📧 UNIVERSAL DOT GENERATOR (Supports Proton.me, Gmail, etc.)</div>
-            <div class="input-group">
-                <input type="text" id="generatorInput" placeholder="Kanacoda@proton.me or example@gmail.com" style="flex:1;">
-                <button class="btn" onclick="generateDots()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Dots</button>
-            </div>
-            <textarea id="bulkInput" rows="2" style="width:100%; margin-bottom:8px;" placeholder="Or paste bulk emails line by line..."></textarea>
-            <div style="display:flex; gap:8px;">
-                <button class="btn btn-emerald" onclick="importBulk()"><i class="fa-solid fa-file-import"></i> Add Bulk Emails</button>
-                <button class="btn btn-rose" onclick="clearCurrentList()"><i class="fa-solid fa-trash"></i> Reset List</button>
-            </div>
-        </div>
-
-        <!-- Main Gmail Table -->
-        <div class="table-container">
-            <div style="padding:10px; display:flex; gap:8px; align-items:center; background:var(--card-bg); border-bottom: 1px solid var(--border-color);">
-                <button class="btn" onclick="copySelected()"><i class="fa-solid fa-copy"></i> Copy Selected</button>
-                <button class="btn btn-rose" onclick="deleteSelected()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
-                <div style="margin-left:auto; display:flex; gap:6px;">
-                    <select id="filterStatus" onchange="renderTable()" style="padding:4px 8px;">
-                        <option value="all">All Status</option>
-                        <option value="Available">Available</option>
-                        <option value="Copied">Copied</option>
-                        <option value="Used">Used</option>
-                        <option value="Reserved">Reserved</option>
-                    </select>
-                </div>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th width="30"><input type="checkbox" onclick="selectAll(this)"></th>
-                        <th>#</th>
-                        <th>Email Address</th>
-                        <th>Status</th>
-                        <th>Notes</th>
-                        <th style="text-align:right;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-        </div>
-
-        <!-- Bulk Actions Toolbar -->
-        <div class="card" style="margin-top:12px;">
-            <div class="card-header">📦 BULK ACTIONS & EXPORT</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-emerald" onclick="exportTxt()"><i class="fa-solid fa-file-export"></i> Export TXT</button>
-                <button class="btn" onclick="exportJson()"><i class="fa-solid fa-file-code"></i> Export JSON</button>
-                <button class="btn btn-amber" onclick="document.getElementById('fileBackup').click()"><i class="fa-solid fa-upload"></i> Import TXT/JSON</button>
-                <input type="file" id="fileBackup" style="display:none" onchange="importBackup(event)">
-            </div>
+    <!-- Project Management -->
+    <div class="card">
+        <div class="card-header">PROJECT MANAGEMENT</div>
+        <div class="menu-group">
+            <div class="menu-item" onclick="createProject()"><i class="fa-solid fa-plus"></i> Create New Project</div>
+            <div class="menu-item" onclick="renameProject()"><i class="fa-solid fa-pen"></i> Rename Project</div>
+            <div class="menu-item" onclick="deleteProject()"><i class="fa-solid fa-trash"></i> Delete Project</div>
+            <div class="menu-item" onclick="exportBackup()"><i class="fa-solid fa-download"></i> Backup Projects</div>
         </div>
     </div>
 
-    <!-- RIGHT SIDEBAR -->
-    <div>
-        <div class="card">
-            <div class="card-header">🔍 SEARCH & FILTER</div>
-            <div class="menu-group">
-                <div class="menu-item" onclick="setFilter('all')"><i class="fa-solid fa-list"></i> Show All</div>
-                <div class="menu-item" onclick="setFilter('copied')"><i class="fa-solid fa-check-double"></i> Show Copied</div>
-                <div class="menu-item" onclick="setFilter('uncopied')"><i class="fa-solid fa-clock"></i> Show Uncopied</div>
-                <div class="menu-item" onclick="setFilter('fav')"><i class="fa-solid fa-star"></i> Show Favorites</div>
-            </div>
-        </div>
+    <!-- Project List -->
+    <div class="card">
+        <div class="card-header">MY PROJECTS</div>
+        <div id="projectList" style="display:flex; flex-direction:column; gap:4px;"></div>
+    </div>
 
-        <div class="card">
-            <div class="card-header">📋 COPY HISTORY</div>
-            <div id="copyHistoryList" style="display:flex; flex-direction:column; gap:6px; max-height:180px; overflow-y:auto; font-size:11px;"></div>
+    <!-- Tools -->
+    <div class="card">
+        <div class="card-header">GMAIL TOOLS</div>
+        <div class="menu-group">
+            <div class="menu-item" onclick="pickRandom()"><i class="fa-solid fa-shuffle"></i> Random Gmail Picker</div>
+            <div class="menu-item" onclick="removeDuplicates()"><i class="fa-solid fa-clone"></i> Remove Duplicates</div>
+            <div class="menu-item" onclick="shuffleList()"><i class="fa-solid fa-random"></i> Shuffle List</div>
+            <div class="menu-item" onclick="undoLastCopy()"><i class="fa-solid fa-rotate-left"></i> Undo Copy</div>
         </div>
+    </div>
 
-        <div class="card">
-            <div class="card-header">⚡ RECENT ACTIVITY</div>
-            <div id="recentActivityList" style="display:flex; flex-direction:column; gap:6px; font-size:10px; color:var(--text-muted);">
-                <div>App Started Successfully</div>
-            </div>
+    <!-- Copy History -->
+    <div class="card">
+        <div class="card-header">📋 COPY HISTORY</div>
+        <div id="copyHistoryList" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto; font-size:11px;"></div>
+    </div>
+
+    <!-- Storage Usage -->
+    <div class="card">
+        <div class="card-header">STORAGE USAGE</div>
+        <div class="storage-bar"><div class="storage-fill"></div></div>
+        <div style="font-size:10px; color:var(--text-muted);">Auto Saved in Browser Storage</div>
+    </div>
+</div>
+
+<!-- MAIN WORKSPACE -->
+<div class="main-wrapper">
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <span style="font-size:9px; color:var(--text-muted);">TOTAL</span>
+            <div class="val" id="stTotal" style="color:var(--primary)">0</div>
+        </div>
+        <div class="stat-box">
+            <span style="font-size:9px; color:var(--text-muted);">COPIED</span>
+            <div class="val" id="stCopied" style="color:var(--pink-text)">0</div>
+        </div>
+        <div class="stat-box">
+            <span style="font-size:9px; color:var(--text-muted);">REMAINING</span>
+            <div class="val" id="stRemaining" style="color:var(--amber)">0</div>
+        </div>
+        <div class="stat-box">
+            <span style="font-size:9px; color:var(--text-muted);">USED</span>
+            <div class="val" id="stUsed" style="color:var(--rose)">0</div>
+        </div>
+        <div class="stat-box">
+            <span style="font-size:9px; color:var(--text-muted);">FAVORITES</span>
+            <div class="val" id="stFav" style="color:var(--emerald)">0</div>
+        </div>
+    </div>
+
+    <!-- Dot Generator Input Box -->
+    <div class="card">
+        <div class="card-header">📧 UNIVERSAL DOT GENERATOR</div>
+        <div class="input-group">
+            <input type="text" id="generatorInput" placeholder="Kanacoda@proton.me" style="flex:2; min-width:180px;">
+            <input type="number" id="genLimitInput" placeholder="Qty (50)" style="width:80px;">
+            <button class="btn" onclick="generateDots()" style="flex:1;"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+        </div>
+        <textarea id="bulkInput" rows="2" style="width:100%; margin-bottom:8px;" placeholder="Or paste bulk emails line by line..."></textarea>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-emerald" onclick="importBulk()"><i class="fa-solid fa-file-import"></i> Add Bulk</button>
+            <button class="btn btn-rose" onclick="clearCurrentList()"><i class="fa-solid fa-trash"></i> Reset</button>
+        </div>
+    </div>
+
+    <!-- Main Gmail Table -->
+    <div class="table-container">
+        <div style="padding:10px; display:flex; gap:8px; align-items:center; background:var(--card-bg); border-bottom: 1px solid var(--border-color); flex-wrap:wrap;">
+            <button class="btn" onclick="copySelected()"><i class="fa-solid fa-copy"></i> Copy Selected</button>
+            <button class="btn btn-rose" onclick="deleteSelected()"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            <select id="filterStatus" onchange="renderTable()" style="padding:6px; margin-left:auto;">
+                <option value="all">All Status</option>
+                <option value="Available">Available</option>
+                <option value="Copied">Copied</option>
+                <option value="Used">Used</option>
+                <option value="Reserved">Reserved</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th width="30"><input type="checkbox" onclick="selectAll(this)"></th>
+                    <th>#</th>
+                    <th>Email Address</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                    <th style="text-align:right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Bulk Actions Toolbar -->
+    <div class="card" style="margin-top:12px;">
+        <div class="card-header">📦 EXPORT / IMPORT</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-emerald" onclick="exportTxt()"><i class="fa-solid fa-file-export"></i> Export TXT</button>
+            <button class="btn" onclick="exportJson()"><i class="fa-solid fa-file-code"></i> Export JSON</button>
+            <button class="btn btn-amber" onclick="document.getElementById('fileBackup').click()"><i class="fa-solid fa-upload"></i> Import Backup</button>
+            <input type="file" id="fileBackup" style="display:none" onchange="importBackup(event)">
         </div>
     </div>
 </div>
@@ -281,19 +284,17 @@ let projects = JSON.parse(localStorage.getItem('qyx_v5_projects')) || [
 ];
 let activeProjId = localStorage.getItem('qyx_v5_active_id') || '1';
 let copyHistory = JSON.parse(localStorage.getItem('qyx_v5_history')) || [];
-let activities = [];
 let activeFilter = 'all';
+
+function toggleSidebar() {
+    document.getElementById("offcanvasSidebar").classList.toggle("active");
+    document.getElementById("sidebarOverlay").classList.toggle("active");
+}
 
 function save() {
     localStorage.setItem('qyx_v5_projects', JSON.stringify(projects));
     localStorage.setItem('qyx_v5_active_id', activeProjId);
     localStorage.setItem('qyx_v5_history', JSON.stringify(copyHistory));
-}
-
-function logActivity(text) {
-    activities.unshift(`${new Date().toLocaleTimeString()} - ${text}`);
-    let box = document.getElementById("recentActivityList");
-    box.innerHTML = activities.slice(0, 5).map(a => `<div>${a}</div>`).join('');
 }
 
 function showToast(msg) {
@@ -306,7 +307,6 @@ function getActiveProj() {
     return projects.find(p => p.id === activeProjId) || projects[0];
 }
 
-// Universal Dot Generator (Proton.me, Gmail, Yahoo Support)
 function generateDots() {
     let input = document.getElementById("generatorInput").value.trim().toLowerCase();
     if (!input || !input.includes("@")) return alert("Please enter a valid email with '@'");
@@ -317,16 +317,28 @@ function generateDots() {
 
     if (username.length <= 1) return alert("Username must be at least 2 chars!");
 
-    let len = username.length;
-    let combinations = Math.pow(2, len - 1);
+    let maxComb = Math.pow(2, username.length - 1);
+    let limitInput = document.getElementById("genLimitInput").value;
+    let targetLimit = 0;
+
+    if (limitInput && !isNaN(limitInput) && parseInt(limitInput) > 0) {
+        targetLimit = parseInt(limitInput);
+    } else {
+        let promptVal = prompt(`কয়টি ইমেল জেনারেট করতে চান? (সর্বোচ্চ: ${maxComb})`, "50");
+        if (!promptVal || isNaN(promptVal) || parseInt(promptVal) <= 0) return;
+        targetLimit = parseInt(promptVal);
+    }
+
     let proj = getActiveProj();
     let count = 0;
 
-    for (let i = 0; i < combinations; i++) {
+    for (let i = 0; i < maxComb; i++) {
+        if (count >= targetLimit) break;
+
         let current = "";
-        for (let j = 0; j < len; j++) {
+        for (let j = 0; j < username.length; j++) {
             current += username[j];
-            if (j < len - 1 && (i & (1 << j)) !== 0) current += ".";
+            if (j < username.length - 1 && (i & (1 << j)) !== 0) current += ".";
         }
         let fullEmail = current + domain;
         if (!proj.items.some(x => x.email === fullEmail)) {
@@ -336,7 +348,6 @@ function generateDots() {
     }
 
     save(); renderProjects(); renderTable();
-    logActivity(`Generated ${count} emails for domain ${domain}`);
     showToast(`Generated ${count} Emails!`);
 }
 
@@ -357,7 +368,6 @@ function importBulk() {
 
     document.getElementById("bulkInput").value = "";
     save(); renderProjects(); renderTable();
-    logActivity(`Imported ${count} bulk emails`);
     showToast(`Added ${count} Emails!`);
 }
 
@@ -396,7 +406,7 @@ function renderTable() {
                     <option value="Reserved" ${item.status==='Reserved'?'selected':''}>Reserved</option>
                 </select>
             </td>
-            <td><input type="text" value="${item.note}" placeholder="Add note..." onblur="updateNote('${item.id}', this.value)" style="padding:2px 4px; font-size:10px; width:100px;"></td>
+            <td><input type="text" value="${item.note}" placeholder="Note..." onblur="updateNote('${item.id}', this.value)" style="padding:2px 4px; font-size:10px; width:80px;"></td>
             <td style="text-align:right;">
                 <button class="btn" style="padding:3px 8px; font-size:10px;" onclick="copySingle('${item.id}', '${item.email}')">Copy</button>
             </td>
@@ -404,7 +414,6 @@ function renderTable() {
         tbody.appendChild(tr);
     });
 
-    // Update Stats
     document.getElementById("stTotal").innerText = proj.items.length;
     document.getElementById("stCopied").innerText = proj.items.filter(x => x.copied).length;
     document.getElementById("stRemaining").innerText = proj.items.filter(x => !x.copied).length;
@@ -423,7 +432,6 @@ function copySingle(id, email) {
         item.status = 'Copied';
         copyHistory.unshift({ email: email, time: new Date().toLocaleTimeString() });
         save(); renderTable(); 
-        logActivity(`Copied: ${email}`);
         showToast("Copied to Clipboard!");
     }
 }
@@ -435,7 +443,6 @@ function undoLastCopy() {
     let item = proj.items.find(x => x.email === last.email);
     if (item) { item.copied = false; item.status = 'Available'; }
     save(); renderTable();
-    logActivity(`Undo Copy: ${last.email}`);
     showToast("Undo Successful!");
 }
 
@@ -443,7 +450,7 @@ function renderHistory() {
     let box = document.getElementById("copyHistoryList");
     box.innerHTML = "";
     copyHistory.slice(0, 5).forEach(h => {
-        box.innerHTML += `<div style="background:var(--bg-main); padding:6px; border-radius:4px;"><strong>${h.email}</strong> <span style="color:var(--text-muted); font-size:9px;">${h.time}</span></div>`;
+        box.innerHTML += `<div style="background:var(--bg-main); padding:6px; border-radius:4px;"><strong>${h.email}</strong></div>`;
     });
 }
 
@@ -452,8 +459,7 @@ function createProject() {
     if (!name) return;
     let p = { id: Date.now().toString(), name: name, items: [] };
     projects.push(p); activeProjId = p.id;
-    save(); renderProjects(); renderTable();
-    logActivity(`Created Project: ${name}`);
+    save(); renderProjects(); renderTable(); toggleSidebar();
 }
 
 function renameProject() {
@@ -483,7 +489,7 @@ function renderProjects() {
     });
 }
 
-function switchProj(id) { activeProjId = id; save(); renderProjects(); renderTable(); }
+function switchProj(id) { activeProjId = id; save(); renderProjects(); renderTable(); toggleSidebar(); }
 function setFilter(f) { activeFilter = f; renderTable(); }
 function toggleTheme() {
     let current = document.documentElement.getAttribute('data-theme');
