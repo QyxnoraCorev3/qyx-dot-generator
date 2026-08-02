@@ -1,29 +1,47 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QyxnoraCore - Gmail Dot Generator</title>
+<title>QyxnoraCore - Gmail Project Manager Pro</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-:root {
+:root[data-theme="dark"] {
     --bg-dark: #05070e;
+    --sidebar-bg: #090c15;
     --card-bg: #0f1422;
     --card-border: #1a233a;
     --accent-purple: #7C3AED;
     --accent-cyan: #0284C7;
     --accent-emerald: #059669;
     --accent-rose: #E11D48;
+    --pink-highlight: #EC4899;
     --text-primary: #F8FAFC;
     --text-muted: #64748B;
+    --input-bg: #070912;
+}
+
+:root[data-theme="light"] {
+    --bg-dark: #F1F5F9;
+    --sidebar-bg: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --card-border: #E2E8F0;
+    --accent-purple: #7C3AED;
+    --accent-cyan: #0284C7;
+    --accent-emerald: #059669;
+    --accent-rose: #E11D48;
+    --pink-highlight: #EC4899;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+    --input-bg: #F8FAFC;
 }
 
 * {
-    margin: 0;
-    padding: 0;
+    margin: 0; padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
 
 body {
@@ -31,189 +49,230 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+    overflow-x: hidden;
 }
 
-/* Toast Notification */
+/* Toast */
 .toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 99999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    position: fixed; top: 20px; right: 20px;
+    z-index: 99999; display: flex; flex-direction: column; gap: 8px;
 }
 .toast {
-    background: #182238;
-    border-left: 4px solid var(--accent-purple);
-    color: #fff;
-    padding: 12px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    background: var(--card-bg); border-left: 4px solid var(--accent-purple);
+    color: var(--text-primary); padding: 12px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
-.container {
-    width: 100%;
-    max-width: 700px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
+.app-layout { display: flex; width: 100vw; height: 100vh; }
 
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 16px;
+/* Sidebar */
+.sidebar {
+    width: 260px; background: var(--sidebar-bg);
+    border-right: 1px solid var(--card-border);
+    display: flex; flex-direction: column; padding: 16px 12px; gap: 15px; flex-shrink: 0;
 }
-
 .brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 20px;
-    font-weight: 800;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 16px; font-weight: 800; padding: 8px 10px;
 }
+.brand-badge { background: var(--accent-purple); color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 6px; }
 
-.brand-badge {
-    background: var(--accent-purple);
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 6px;
-}
+.nav-title { font-size: 10px; font-weight: 800; color: var(--text-muted); letter-spacing: 1px; margin: 12px 0 6px 10px; text-transform: uppercase; }
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.proj-list { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; max-height: 250px; }
+.proj-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;
 }
+.proj-item.active { border-color: var(--accent-purple); background: rgba(124, 58, 237, 0.1); }
 
-.input-group label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--text-muted);
+/* Main Content */
+.main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+.top-header {
+    height: 60px; border-bottom: 1px solid var(--card-border);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: var(--sidebar-bg);
 }
+.container { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
 
-.input-box {
-    display: flex;
-    gap: 10px;
+/* Stats Dashboard */
+.stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.stat-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 4px;
 }
+.progress-bar-bg { width: 100%; height: 6px; background: var(--card-border); border-radius: 10px; overflow: hidden; margin-top: 4px; }
+.progress-bar-fill { height: 100%; background: var(--accent-emerald); width: 0%; transition: width 0.3s; }
 
-.input-box input {
-    flex: 1;
-    background: #070912;
-    border: 1px solid var(--card-border);
-    padding: 12px 16px;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
+/* Cards & Controls */
+.card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.input-row { display: flex; gap: 10px; }
+input, select {
+    background: var(--input-bg); border: 1px solid var(--card-border);
+    color: var(--text-primary); padding: 10px 14px; border-radius: 8px; font-size: 13px; outline: none;
 }
-
-.input-box input:focus {
-    border-color: var(--accent-purple);
-}
+input:focus, select:focus { border-color: var(--accent-purple); }
 
 .btn {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: #fff;
-    transition: 0.2s;
+    padding: 8px 14px; border: none; border-radius: 8px; font-size: 12px; font-weight: 700;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: #fff;
 }
-
 .btn-purple { background: var(--accent-purple); }
-.btn-purple:hover { background: #6D28D9; }
 .btn-cyan { background: var(--accent-cyan); }
 .btn-emerald { background: var(--accent-emerald); }
 .btn-rose { background: var(--accent-rose); }
+.btn-pink { background: var(--pink-highlight); }
 
-.stats-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #070912;
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid var(--card-border);
-    font-size: 13px;
+/* Table Section */
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn {
+    background: var(--sidebar-bg); border: 1px solid var(--card-border);
+    color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;
 }
+.filter-btn.active { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); }
 
-.output-box {
-    width: 100%;
-    height: 250px;
-    background: #070912;
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 14px;
-    color: #38BDF8;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 13px;
-    outline: none;
-    resize: vertical;
-}
+table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+th { background: var(--sidebar-bg); padding: 10px 14px; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
+td { padding: 10px 14px; border-bottom: 1px solid var(--card-border); }
 
-.action-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
+/* Pink Highlight for Copied Gmails */
+tr.copied-row { background: rgba(236, 72, 153, 0.15) !important; color: var(--pink-highlight); }
+tr.copied-row td { border-color: rgba(236, 72, 153, 0.2); }
+
+.badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: 700; }
+.badge-available { background: rgba(5, 150, 105, 0.2); color: #10B981; }
+.badge-used { background: rgba(225, 29, 72, 0.2); color: #F43F5E; }
+.badge-reserved { background: rgba(2, 132, 199, 0.2); color: #38BDF8; }
+
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 </style>
 </head>
-
 <body>
 
 <div class="toast-container" id="toastBox"></div>
 
-<div class="container">
-    <div class="header">
+<div class="app-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
         <div class="brand">
-            <i class="fa-solid fa-envelope-open-text" style="color: #8B5CF6;"></i>
-            Gmail Dot Generator
-            <span class="brand-badge">Tool</span>
+            <span><i class="fa-solid fa-envelope-open-text" style="color: var(--accent-purple);"></i> Gmail Manager</span>
+            <span class="brand-badge">PRO</span>
         </div>
+
+        <button class="btn btn-purple" onclick="createProject()"><i class="fa-solid fa-plus"></i> New Project</button>
+
+        <div class="nav-title">PROJECTS</div>
+        <div class="proj-list" id="projectList"></div>
+
+        <div class="nav-title">THEME & BACKUP</div>
+        <button class="btn btn-cyan" onclick="toggleTheme()"><i class="fa-solid fa-circle-half-stroke"></i> Toggle Dark/Light</button>
+        <button class="btn btn-emerald" onclick="exportBackup()"><i class="fa-solid fa-download"></i> Backup All Data</button>
+        <button class="btn btn-rose" onclick="document.getElementById('fileBackup').click()"><i class="fa-solid fa-upload"></i> Restore Backup</button>
+        <input type="file" id="fileBackup" style="display:none" onchange="importBackup(event)">
     </div>
 
-    <div class="input-group">
-        <label>আপনার জিমেইল অ্যাড্রেস লিখুন</label>
-        <div class="input-box">
-            <input type="text" id="gmailInput" placeholder="qyxnoracore@gmail.com" value="qyxnoracore@gmail.com">
-            <button class="btn btn-purple" onclick="generateDots()"><i class="fa-solid fa-wand-magic-sparkles"></i> জেনারেট করুন</button>
+    <!-- Main Workspace -->
+    <div class="main-content">
+        <div class="top-header">
+            <h3 id="currentProjTitle">No Project Selected</h3>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-pink" onclick="pickRandom()"><i class="fa-solid fa-shuffle"></i> Random Picker</button>
+                <button class="btn btn-rose" onclick="deleteCurrentProject()"><i class="fa-solid fa-trash"></i> Delete Project</button>
+            </div>
         </div>
-    </div>
 
-    <div class="stats-bar">
-        <span>মোট ডট মেইল তৈরি হয়েছে: <strong id="totalCount" style="color: #10B981;">0</strong> টি</span>
-    </div>
+        <div class="container">
+            <!-- Dashboard Stats & Progress -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span style="font-size:10px; color:var(--text-muted)">TOTAL GMAIL</span>
+                    <strong style="font-size:18px" id="stTotal">0</strong>
+                </div>
+                <div class="stat-card">
+                    <span style="font-size:10px; color:var(--text-muted)">COPIED</span>
+                    <strong style="font-size:18px; color:var(--pink-highlight)" id="stCopied">0</strong>
+                </div>
+                <div class="stat-card">
+                    <span style="font-size:10px; color:var(--text-muted)">REMAINING</span>
+                    <strong style="font-size:18px" id="stRemaining">0</strong>
+                </div>
+                <div class="stat-card">
+                    <span style="font-size:10px; color:var(--text-muted)">USED</span>
+                    <strong style="font-size:18px; color:var(--accent-rose)" id="stUsed">0</strong>
+                </div>
+                <div class="stat-card">
+                    <span style="font-size:10px; color:var(--text-muted)">FAVORITES</span>
+                    <strong style="font-size:18px; color:#F59E0B" id="stFav">0</strong>
+                </div>
+            </div>
 
-    <textarea id="outputArea" class="output-box" readonly placeholder="জেনারেট হওয়া মেলগুলো এখানে দেখাবে..."></textarea>
+            <div class="card">
+                <div style="font-size:11px; font-weight:700; color:var(--text-muted)">PROJECT PROGRESS</div>
+                <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressBar"></div></div>
+            </div>
 
-    <div class="action-grid">
-        <button class="btn btn-cyan" onclick="copyAll()"><i class="fa-solid fa-copy"></i> কপি অল</button>
-        <button class="btn btn-emerald" onclick="downloadTxt()"><i class="fa-solid fa-file-arrow-down"></i> ডাউনলোড TXT</button>
-        <button class="btn btn-rose" onclick="clearAll()"><i class="fa-solid fa-trash"></i> ক্লিয়ার</button>
+            <!-- Gmail Dot Generator & Import Area -->
+            <div class="card">
+                <div style="font-size:12px; font-weight:700;">📧 Gmail Dot Generator & Bulk Add</div>
+                <div class="input-row">
+                    <input type="text" id="gmailBaseInput" placeholder="qyxnoracore@gmail.com" style="flex:1">
+                    <button class="btn btn-purple" onclick="generateDotGmails()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Dots</button>
+                </div>
+                <textarea id="bulkArea" style="height:70px; background:var(--input-bg); border:1px solid var(--card-border); color:var(--text-primary); padding:8px; border-radius:8px; font-size:12px; outline:none;" placeholder="Or paste bulk Gmails line by line..."></textarea>
+                <div class="input-row">
+                    <button class="btn btn-emerald" onclick="importBulkGmails()"><i class="fa-solid fa-file-import"></i> Add Bulk Gmails</button>
+                    <button class="btn btn-cyan" onclick="shuffleList()"><i class="fa-solid fa-random"></i> Shuffle List</button>
+                    <button class="btn btn-purple" onclick="removeDuplicates()"><i class="fa-solid fa-clone"></i> Remove Duplicates</button>
+                </div>
+            </div>
+
+            <!-- Data Table with Filters -->
+            <div class="card">
+                <div class="filter-bar">
+                    <input type="text" id="searchBox" placeholder="Search Gmails/Notes..." oninput="renderTable()" style="padding:6px 10px; font-size:11px; width:200px;">
+                    <button class="filter-btn active" id="fAll" onclick="setFilter('all')">Show All</button>
+                    <button class="filter-btn" id="fCopied" onclick="setFilter('copied')">Copied</button>
+                    <button class="filter-btn" id="fUncopied" onclick="setFilter('uncopied')">Uncopied</button>
+                    <button class="filter-btn" id="fFav" onclick="setFilter('fav')">Favorites</button>
+                    <button class="filter-btn" id="fUsed" onclick="setFilter('used')">Used</button>
+                    <button class="btn btn-pink" style="margin-left:auto; padding:4px 10px; font-size:10px;" onclick="copyAllFiltered()"><i class="fa-solid fa-copy"></i> Copy Filtered</button>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onclick="toggleSelectAll(this)"></th>
+                            <th>Gmail Address</th>
+                            <th>Status</th>
+                            <th>Note</th>
+                            <th style="text-align:right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gmailTableBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Export Tools -->
+            <div class="grid-3">
+                <button class="btn btn-emerald" onclick="exportTxt()"><i class="fa-solid fa-file-export"></i> Export TXT</button>
+                <button class="btn btn-cyan" onclick="exportJson()"><i class="fa-solid fa-file-code"></i> Export JSON</button>
+                <button class="btn btn-rose" onclick="deleteSelected()"><i class="fa-solid fa-trash-can"></i> Delete Selected</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+// ================= LocalStorage Database =================
+let projects = JSON.parse(localStorage.getItem('qyx_gmail_projects')) || [];
+let activeProjId = localStorage.getItem('qyx_gmail_active_id') || null;
+let currentFilter = 'all';
+
+function saveState() {
+    localStorage.setItem('qyx_gmail_projects', JSON.stringify(projects));
+    localStorage.setItem('qyx_gmail_active_id', activeProjId);
+}
+
 function showToast(msg) {
     const box = document.getElementById("toastBox");
     const t = document.createElement("div");
@@ -223,75 +282,352 @@ function showToast(msg) {
     setTimeout(() => t.remove(), 2000);
 }
 
-function generateDots() {
-    let email = document.getElementById("gmailInput").value.trim().toLowerCase();
+function toggleTheme() {
+    let current = document.documentElement.getAttribute('data-theme');
+    let target = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', target);
+    localStorage.setItem('qyx_theme', target);
+}
+
+// Initial Setup
+window.onload = function() {
+    let savedTheme = localStorage.getItem('qyx_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    if (projects.length === 0) {
+        let defaultProj = { id: Date.now().toString(), name: "Default Project", items: [] };
+        projects.push(defaultProj);
+        activeProjId = defaultProj.id;
+        saveState();
+    }
+    if (!activeProjId && projects.length > 0) activeProjId = projects[0].id;
     
-    if (!email || !email.includes("@gmail.com")) {
-        alert("দয়া করে একটি সঠিক @gmail.com ইমেইল অ্যাড্রেস লিখুন!");
-        return;
-    }
+    renderProjects();
+    renderTable();
+};
 
-    let username = email.split("@")[0].replace(/\./g, '');
+function getActiveProj() {
+    return projects.find(p => p.id === activeProjId) || projects[0];
+}
+
+// Project Operations
+function createProject() {
+    let name = prompt("Enter Project Name:", "Workspace " + (projects.length + 1));
+    if (!name) return;
+    let proj = { id: Date.now().toString(), name: name, items: [] };
+    projects.push(proj);
+    activeProjId = proj.id;
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast("Project Created!");
+}
+
+function deleteCurrentProject() {
+    if (projects.length <= 1) return alert("You must keep at least one project!");
+    if (!confirm("Delete this project and all its data?")) return;
+    projects = projects.filter(p => p.id !== activeProjId);
+    activeProjId = projects[0].id;
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast("Project Deleted!");
+}
+
+function renderProjects() {
+    let box = document.getElementById("projectList");
+    box.innerHTML = "";
+    projects.forEach(p => {
+        let div = document.createElement("div");
+        div.className = `proj-item ${p.id === activeProjId ? 'active' : ''}`;
+        div.onclick = () => {
+            activeProjId = p.id;
+            saveState();
+            renderProjects();
+            renderTable();
+        };
+        div.innerHTML = `
+            <span>📁 ${p.name}</span>
+            <span style="font-size:10px; color:var(--text-muted);">${p.items.length}</span>
+        `;
+        box.appendChild(div);
+    });
+    let active = getActiveProj();
+    if (active) document.getElementById("currentProjTitle").innerText = "📁 " + active.name;
+}
+
+// Gmail Generation & Addition
+function generateDotGmails() {
+    let input = document.getElementById("gmailBaseInput").value.trim().toLowerCase();
+    if (!input.includes("@gmail.com")) return alert("Valid @gmail.com required!");
+    
+    let username = input.split("@")[0].replace(/\./g, '');
     let domain = "@gmail.com";
-
-    if (username.length <= 1) {
-        alert("ইউজারনেম অন্তত ২ অক্ষরের হতে হবে!");
-        return;
-    }
-
-    let results = [];
     let len = username.length;
     let combinations = Math.pow(2, len - 1);
+    let results = [];
 
     for (let i = 0; i < combinations; i++) {
-        let currentEmail = "";
+        let current = "";
         for (let j = 0; j < len; j++) {
-            currentEmail += username[j];
-            if (j < len - 1) {
-                if ((i & (1 << j)) !== 0) {
-                    currentEmail += ".";
-                }
-            }
+            current += username[j];
+            if (j < len - 1 && (i & (1 << j)) !== 0) current += ".";
         }
-        results.push(currentEmail + domain);
+        results.push(current + domain);
     }
 
-    document.getElementById("outputArea").value = results.join("\n");
-    document.getElementById("totalCount").innerText = results.length;
-    showToast("সফলভাবে জেনারেট হয়েছে!");
+    let proj = getActiveProj();
+    results.forEach(m => {
+        if (!proj.items.some(x => x.email === m)) {
+            proj.items.push({ id: Date.now() + Math.random(), email: m, copied: false, status: 'Available', note: '', fav: false, selected: false });
+        }
+    });
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast(`Generated ${results.length} Dot Gmails!`);
 }
 
-function copyAll() {
-    let txt = document.getElementById("outputArea").value;
-    if (!txt) return showToast("কপি করার মতো কিছুই নেই!");
-    navigator.clipboard.writeText(txt);
-    showToast("সবগুলো মেল কপি করা হয়েছে!");
+function importBulkGmails() {
+    let txt = document.getElementById("bulkArea").value.trim();
+    if (!txt) return;
+    let lines = txt.split("\n");
+    let proj = getActiveProj();
+    let count = 0;
+
+    lines.forEach(l => {
+        let m = l.trim().toLowerCase();
+        if (m && !proj.items.some(x => x.email === m)) {
+            proj.items.push({ id: Date.now() + Math.random(), email: m, copied: false, status: 'Available', note: '', fav: false, selected: false });
+            count++;
+        }
+    });
+
+    document.getElementById("bulkArea").value = "";
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast(`Added ${count} Gmails!`);
 }
 
-function downloadTxt() {
-    let txt = document.getElementById("outputArea").value;
-    if (!txt) return showToast("ডাউনলোড করার মতো তথ্য নেই!");
-    
+// Table Rendering & Filters
+function setFilter(f) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById({all:'fAll', copied:'fCopied', uncopied:'fUncopied', fav:'fFav', used:'fUsed'}[f]).classList.add('active');
+    renderTable();
+}
+
+function renderTable() {
+    let proj = getActiveProj();
+    let tbody = document.getElementById("gmailTableBody");
+    tbody.innerHTML = "";
+    let search = document.getElementById("searchBox").value.toLowerCase();
+
+    let filtered = proj.items.filter(item => {
+        let matchSearch = item.email.toLowerCase().includes(search) || item.note.toLowerCase().includes(search);
+        if (!matchSearch) return false;
+        if (currentFilter === 'copied') return item.copied;
+        if (currentFilter === 'uncopied') return !item.copied;
+        if (currentFilter === 'fav') return item.fav;
+        if (currentFilter === 'used') return item.status === 'Used';
+        return true;
+    });
+
+    filtered.forEach(item => {
+        let tr = document.createElement("tr");
+        if (item.copied) tr.className = "copied-row"; // Pink highlight for copied
+
+        tr.innerHTML = `
+            <td><input type="checkbox" ${item.selected ? 'checked' : ''} onclick="toggleSelect('${item.id}')"></td>
+            <td style="font-weight:600;">
+                <i class="fa-${item.fav ? 'solid' : 'regular'} fa-star" style="color:#F59E0B; cursor:pointer; margin-right:6px;" onclick="toggleFav('${item.id}')"></i>
+                ${item.email}
+            </td>
+            <td>
+                <select onchange="updateStatus('${item.id}', this.value)" style="padding:2px 6px; font-size:10px;">
+                    <option value="Available" ${item.status === 'Available' ? 'selected' : ''}>Available</option>
+                    <option value="Used" ${item.status === 'Used' ? 'selected' : ''}>Used</option>
+                    <option value="Reserved" ${item.status === 'Reserved' ? 'selected' : ''}>Reserved</option>
+                </select>
+            </td>
+            <td><input type="text" value="${item.note}" placeholder="Add note..." onblur="updateNote('${item.id}', this.value)" style="padding:2px 6px; font-size:11px; width:120px;"></td>
+            <td style="text-align:right;">
+                <button class="btn ${item.copied ? 'btn-rose' : 'btn-pink'}" style="padding:3px 8px; font-size:10px;" onclick="copySingle('${item.id}', '${item.email}')">
+                    ${item.copied ? 'Copied ✓' : 'Copy'}
+                </button>
+                <button class="btn btn-rose" style="padding:3px 6px; font-size:10px;" onclick="deleteSingle('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Update Stats
+    let total = proj.items.length;
+    let copied = proj.items.filter(x => x.copied).length;
+    let used = proj.items.filter(x => x.status === 'Used').length;
+    let fav = proj.items.filter(x => x.fav).length;
+
+    document.getElementById("stTotal").innerText = total;
+    document.getElementById("stCopied").innerText = copied;
+    document.getElementById("stRemaining").innerText = total - copied;
+    document.getElementById("stUsed").innerText = used;
+    document.getElementById("stFav").innerText = fav;
+
+    let progress = total > 0 ? (copied / total) * 100 : 0;
+    document.getElementById("progressBar").style.width = progress + "%";
+}
+
+// Single Item Actions
+function copySingle(id, email) {
+    navigator.clipboard.writeText(email);
+    let proj = getActiveProj();
+    let item = proj.items.find(x => x.id == id);
+    if (item) {
+        item.copied = true;
+        saveState();
+        renderTable();
+        showToast("Copied to Clipboard!");
+    }
+}
+
+function toggleFav(id) {
+    let proj = getActiveProj();
+    let item = proj.items.find(x => x.id == id);
+    if (item) { item.fav = !item.fav; saveState(); renderTable(); }
+}
+
+function updateStatus(id, val) {
+    let proj = getActiveProj();
+    let item = proj.items.find(x => x.id == id);
+    if (item) { item.status = val; saveState(); renderTable(); }
+}
+
+function updateNote(id, val) {
+    let proj = getActiveProj();
+    let item = proj.items.find(x => x.id == id);
+    if (item) { item.note = val; saveState(); }
+}
+
+function deleteSingle(id) {
+    let proj = getActiveProj();
+    proj.items = proj.items.filter(x => x.id != id);
+    saveState();
+    renderProjects();
+    renderTable();
+}
+
+// Bulk Actions
+function toggleSelect(id) {
+    let proj = getActiveProj();
+    let item = proj.items.find(x => x.id == id);
+    if (item) item.selected = !item.selected;
+    saveState();
+}
+
+function toggleSelectAll(master) {
+    let proj = getActiveProj();
+    proj.items.forEach(x => x.selected = master.checked);
+    saveState();
+    renderTable();
+}
+
+function deleteSelected() {
+    let proj = getActiveProj();
+    proj.items = proj.items.filter(x => !x.selected);
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast("Selected Deleted!");
+}
+
+function shuffleList() {
+    let proj = getActiveProj();
+    proj.items.sort(() => Math.random() - 0.5);
+    saveState();
+    renderTable();
+    showToast("List Shuffled!");
+}
+
+function removeDuplicates() {
+    let proj = getActiveProj();
+    let before = proj.items.length;
+    let seen = new Set();
+    proj.items = proj.items.filter(x => {
+        if (seen.has(x.email)) return false;
+        seen.add(x.email);
+        return true;
+    });
+    saveState();
+    renderProjects();
+    renderTable();
+    showToast(`Removed ${before - proj.items.length} Duplicates!`);
+}
+
+function pickRandom() {
+    let proj = getActiveProj();
+    let uncopied = proj.items.filter(x => !x.copied);
+    if (uncopied.length === 0) return alert("No uncopied Gmails left!");
+    let random = uncopied[Math.floor(Math.random() * uncopied.length)];
+    copySingle(random.id, random.email);
+    alert("Picked Random Gmail:\n" + random.email);
+}
+
+function copyAllFiltered() {
+    let search = document.getElementById("searchBox").value.toLowerCase();
+    let proj = getActiveProj();
+    let list = proj.items.filter(item => {
+        let matchSearch = item.email.toLowerCase().includes(search);
+        if (!matchSearch) return false;
+        if (currentFilter === 'copied') return item.copied;
+        if (currentFilter === 'uncopied') me = !item.copied;
+        return true;
+    }).map(x => x.email);
+
+    if (list.length === 0) return showToast("Nothing to copy!");
+    navigator.clipboard.writeText(list.join("\n"));
+    showToast(`Copied ${list.length} Gmails!`);
+}
+
+// Backup & Export
+function exportTxt() {
+    let proj = getActiveProj();
+    let txt = proj.items.map(x => x.email).join("\n");
     let blob = new Blob([txt], {type: "text/plain"});
     let a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `dot_emails_${Date.now()}.txt`;
+    a.download = `${proj.name}_gmails.txt`;
     a.click();
-    showToast("TXT ফাইল ডাউনলোড শুরু হয়েছে!");
 }
 
-function clearAll() {
-    document.getElementById("gmailInput").value = "";
-    document.getElementById("outputArea").value = "";
-    document.getElementById("totalCount").innerText = "0";
-    showToast("সব পরিস্কার করা হয়েছে!");
+function exportJson() {
+    let blob = new Blob([JSON.stringify(projects, null, 2)], {type: "application/json"});
+    let a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `qyx_gmail_backup.json`;
+    a.click();
 }
 
-window.onload = function() {
-    generateDots();
-};
+function exportBackup() { exportJson(); }
+
+function importBackup(e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            projects = JSON.parse(evt.target.result);
+            activeProjId = projects[0].id;
+            saveState();
+            renderProjects();
+            renderTable();
+            showToast("Backup Restored!");
+        } catch(err) {
+            alert("Invalid Backup File!");
+        }
+    };
+    reader.readAsText(file);
+}
 </script>
-
 </body>
-  </html>
-  
+</html>
